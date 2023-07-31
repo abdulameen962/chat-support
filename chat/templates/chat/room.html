@@ -1,0 +1,62 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load chatextras %}
+{% block content %}
+    <h1 class="text-2xl">Room: {{ room.uuid }} </h1>
+
+    <hr class="my-6">
+
+    <p  class="mb-6">
+        <b> Name: </b> {{ room.client }} <br>
+        <b>Started: </b> {{ room.created_at|timesince }} ago <br>
+        <b>Status: </b> {{ room.get_status_display }} <br>
+        <b>Page: </b> {{ room.url }} <br>
+        <b>Agent: </b>{% firstof room.agent.name 'None yet...'  %}
+    </p>
+
+    <hr class="mb-6">
+
+    <div id="chat_log" class="mb-4 p-4 bg-gray-100 rounded-xl h-[300px] overflow-scroll flex-col flex-grow">
+        {% for message in room.all_messages %}
+            <div class="flex w-full max-w-md mt-2 space-x-3 {% if message.created_by %} ml-auto justify-end {% endif %}">
+                {% if not message.created_by %}
+                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-teal-400 text-center pt-2">
+                        {{ message.sent_by|initials }}
+                    </div>
+                {% endif %}
+                <div>
+                    <div class="p-4 rounded-xl {% if messages.created_by %} bg-emerald-600 text-white {% else %} bg-gray-300 {% endif %}">
+                        <p class="text-sm"> {{ message.body }} </p>
+                    </div>
+                    <span class="text-xs text-grey-500 leeding-none">
+                        {{ message.created_at|timesince }} ago
+                    </span>
+                </div>
+                {% if message.created_by %}
+                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-grey-100 text-center pt-2">
+                        {{ message.sent_by|initials }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    {% if room.status == 'active' %}
+        <form id="message_form">
+            {% csrf_token %}
+            <input required type="text" name="body" id="chat_message_input" class="w-full mb-4 p-4 bg-gray-100 rounded-xl" placeholder="Type your message" />
+
+            <button id="chat_message_submit" type="submit" class="py-2 px-6 bg-rose-600 text-white rounded-xl"> Send </button>
+        </form>
+    {% endif %}
+{% endblock  %}
+
+{% block scripts %}
+    {% if room.status == 'active' %}
+        {{ room.uuid|json_script:'room_uuid' }}
+        {{ request.user.name|json_script:'user_name' }}
+        {{ request.user.id|json_script:'user_id' }}
+
+        <script src="{% static 'main/js/main-admin.js' %}"></script>
+    {% endif %}
+
+{% endblock  %}

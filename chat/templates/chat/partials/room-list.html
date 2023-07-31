@@ -1,0 +1,18 @@
+<div class="grid grid-cols-4 gap-4">
+    {% for room in  rooms %}
+        <div class="p-4 rounded-xl {% if room.status == 'waiting' %} bg-emerald-100 {% elif room.status == 'active' %} bg-amber-500 {% else %} bg-teal-300 {% endif %}">
+            <h3 class="mb-4 text-lg"> Chat </h3>
+            <p>
+                <b> ID: {{ room.uuid }} </b>  <br>
+                <b> Name: {{ room.name }} </b>  <br>
+                <b> Status: {{ room.get_status_display }} </b> <br>
+                <b> Agent: {% firstof room.agent.name 'Not yet...' %} </b> <br>
+                <a href="{% url 'chat:room' room.uuid %}" class="mt-4 inline-block py-2 px-6 bg-emerald-800 text-white rounded-xl"> Join</a>
+                
+                <a href="{% url 'chat:delete_room' room.uuid %}" class="mt-4 inline-block py-2 px-6 bg-rose-800 text-white rounded-xl"> Delete room </a>
+            </p>
+
+
+        </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,19 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    <h1 class="mb-6 text-2xl">{{ user_detail.name }}</h1>
+
+    {% comment %} <form action="{% url 'chat:user_details' %}" method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="mt-6 inline-block py-2 px-6 bg-rose-600 text-white rounded-xl"> Add User </button>
+    </form> {% endcomment %}
+    <hr class="my-6">
+
+    <div class="mt-8">
+        <h2 class="mb-4 text-lg"> Rooms </h2>
+        {% include 'chat/partials/room-list.html' %}
+    </div>
+{% endblock %}
